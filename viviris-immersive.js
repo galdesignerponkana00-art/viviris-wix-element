@@ -36,6 +36,32 @@
       if (root) {
         root.style.minHeight = Math.max(window.innerHeight || 900, 900) + 'px';
       }
+      const fitToFooter = () => {
+        const contentRoot = this.querySelector('.viviris-custom-element-root');
+        if (!contentRoot) return;
+        const footer = this.querySelector('footer');
+        const target = footer || contentRoot;
+        const hostTop = this.getBoundingClientRect().top + window.scrollY;
+        const targetBottom = target.getBoundingClientRect().bottom + window.scrollY;
+        const height = Math.max(window.innerHeight || 900, Math.ceil(targetBottom - hostTop));
+        this.style.setProperty('height', height + 'px', 'important');
+        this.style.setProperty('min-height', height + 'px', 'important');
+        this.dataset.vivirisHeight = String(height);
+      };
+      const scheduleFitToFooter = () => requestAnimationFrame(fitToFooter);
+      fitToFooter();
+      requestAnimationFrame(fitToFooter);
+      setTimeout(fitToFooter, 400);
+      setTimeout(fitToFooter, 1500);
+      setTimeout(fitToFooter, 3500);
+      window.addEventListener('resize', scheduleFitToFooter, { passive: true });
+      this.querySelectorAll('img,video').forEach((media) => {
+        media.addEventListener('load', scheduleFitToFooter, { passive: true });
+        media.addEventListener('loadedmetadata', scheduleFitToFooter, { passive: true });
+      });
+      if (window.ResizeObserver && root) {
+        new ResizeObserver(scheduleFitToFooter).observe(root);
+      }
       loadThree().then(function(){
         try {
           new Function(APP_SCRIPT)();
