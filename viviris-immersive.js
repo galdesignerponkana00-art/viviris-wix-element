@@ -47,6 +47,20 @@
         this.style.setProperty('height', height + 'px', 'important');
         this.style.setProperty('min-height', height + 'px', 'important');
         this.dataset.vivirisHeight = String(height);
+        let parent = this.parentElement;
+        let depth = 0;
+        while (parent && parent !== document.body && parent !== document.documentElement && depth < 4) {
+          const rect = parent.getBoundingClientRect();
+          const hostRect = this.getBoundingClientRect();
+          const sameColumn = Math.abs(rect.width - hostRect.width) < 80 || rect.width >= hostRect.width;
+          if (sameColumn && rect.height > height + 80 && rect.height < 120000) {
+            parent.style.setProperty('height', height + 'px', 'important');
+            parent.style.setProperty('min-height', height + 'px', 'important');
+            parent.dataset.vivirisHeight = String(height);
+          }
+          parent = parent.parentElement;
+          depth += 1;
+        }
       };
       const scheduleFitToFooter = () => requestAnimationFrame(fitToFooter);
       fitToFooter();
