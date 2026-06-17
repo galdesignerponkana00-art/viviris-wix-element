@@ -36,6 +36,32 @@
       if (root) {
         root.style.minHeight = Math.max(window.innerHeight || 900, 900) + 'px';
       }
+      const enterExperience = () => {
+        if (this.__vivirisEntered) return;
+        this.__vivirisEntered = true;
+        const welcome = this.querySelector('#welcome');
+        const contentRoot = this.querySelector('.viviris-custom-element-root');
+        const landing = this.querySelector('#landing');
+        const bgm = this.querySelector('#bgm');
+        if (welcome) welcome.classList.add('gone');
+        document.body.classList.add('entered');
+        if (contentRoot) contentRoot.classList.add('entered','user-entered');
+        if (landing && typeof landing.focus === 'function') {
+          try { landing.focus({ preventScroll: true }); } catch (_) { landing.focus(); }
+        }
+        if (bgm && typeof bgm.play === 'function') bgm.play().catch(function(){});
+      };
+      this.addEventListener('click', (event) => {
+        const target = event.target && event.target.closest ? event.target.closest('#enterBtn') : null;
+        if (!target) return;
+        event.preventDefault();
+        enterExperience();
+      }, true);
+      this.addEventListener('keydown', (event) => {
+        if ((event.key !== 'Enter' && event.key !== ' ') || !event.target || event.target.id !== 'enterBtn') return;
+        event.preventDefault();
+        enterExperience();
+      }, true);
       const fitToFooter = () => {
         const contentRoot = this.querySelector('.viviris-custom-element-root');
         if (!contentRoot) return;
